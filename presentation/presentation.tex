@@ -1,0 +1,149 @@
+\documentclass[xcolor=colortbl
+%,draft
+]{beamer}
+\mode<presentation>
+
+\usepackage{tikz}
+\usepackage[ngerman]{babel}
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage{graphicx} 			%Grafiken
+\usepackage{xcolor}   			%Farbige Schrift ermöglichen
+\usepackage{amsmath}  			%Zusätzliche Mathebefehle
+\usepackage{mathtools} 
+
+\usetikzlibrary{backgrounds,fit,decorations.pathreplacing, positioning, calc}
+%\beamerdefaultoverlayspecification{<+->}
+
+\input{../shared.tex}
+
+% Load Theme
+\usetheme[slogan=false, navigation=false, 
+frametotal=true,    % TODO: nrtiaenrtuvlenr
+myriad=false]{UzL}
+
+\begin{document}
+\maketitle
+
+\begin{frame}
+    \tableofcontents
+\end{frame}
+
+\section{Einführung}
+
+\section{Quantenbits}
+\begin{frame}{Quantenbits (Qubits)}
+    \begin{definition}{Qubits}
+        \begin{align*}
+        &\qreg \psi = a \qreg 0 + b \qreg 1 = \begin{pmatrix} a \\ b \end{pmatrix}  \\
+        &a, b \in \mathbb C \\
+        &|a|^2 + |b|^2 = 1
+        \end{align*}
+    \end{definition}
+\end{frame}
+
+\begin{frame}{Quantenregister}
+    \begin{example}
+    \[
+        \qreg \psi = \qregv a {00} + \qregv a {01} + \qregv a {10} + \qregv a {11} = 
+    \begin{pmatrix}
+        a_{00}  \\
+        a_{01}  \\
+        a_{10}  \\
+        a_{11}  \\
+    \end{pmatrix}
+    \]
+    \[
+        |a_{00}|^2 + |a_{01}|^2 + |a_{10}|^2 + |a_{11}|^2 = 1
+    \]
+    \end{example}
+\end{frame}
+
+\section{Quantenschaltkreise}
+
+\begin{frame}[t]{NOT-Gatter}
+    \begin{itemize}
+        \item \(
+            \NOT(\qreg 0) = \qreg 1\) \\
+            \(\NOT(\qreg 1) = \qreg 0
+            \)
+
+        \pause
+        \item Generalisierung: \(
+            \NOT(a \qreg 0 + b \qreg 1) = b \qreg 0 + a \qreg 1
+        \)
+        \pause
+        \item Länge bleibt erhalten: \(
+            |a|^2 + |b|^2 = 1 
+            \)
+
+        \pause
+        \item Darstellung als Matrix-Vektor-Multiplikation: \(
+            \begin{bmatrix}
+                0 & 1 \\
+                1 & 0 \\
+            \end{bmatrix} \cdot 
+            \begin{pmatrix}
+                a \\ b
+            \end{pmatrix} = 
+            \begin{pmatrix}
+                b \\ a
+            \end{pmatrix} 
+            \)
+    \end{itemize}
+\end{frame}
+
+\begin{frame}
+        \begin{equation*}
+        \begin{bmatrix}
+            0 & 1 \\
+            1 & 0 \\
+        \end{bmatrix} \cdot 
+        \begin{pmatrix}
+            a \\ b
+        \end{pmatrix} = 
+        \begin{pmatrix}
+            b \\ a
+        \end{pmatrix} 
+        \end{equation*}
+\end{frame}
+
+
+\begin{frame}
+    \pictureCNOTb
+\end{frame}
+
+\begin{frame}
+    \pictureHadamard
+\end{frame}
+
+\section{No cloning theorem}
+\begin{frame}
+    \begin{fact}
+        Quanten können im Allgemeinen nicht geklont werden.
+    \end{fact}
+    \begin{itemize}
+        \item keine Funktion $\qregfun{\varphi,\psi}{\psi,\psi}$
+        \item nicht durch unitäre Matrix ausdrückbar
+
+    \end{itemize}
+\end{frame}
+\section{Simulation klassischer Computer}
+
+\begin{frame}
+    \pictureToffoli
+\end{frame}
+
+
+\section{Deutschs Algorithmus}
+\begin{frame}
+    \pictureDeutschAlgo
+\end{frame}
+\section{Deutsch-Jozsa Algorithmus}
+
+\section{Komplexität}
+\begin{frame}
+\end{frame}
+
+\end{document}
+

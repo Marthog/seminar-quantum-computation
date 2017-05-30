@@ -1,0 +1,128 @@
+\usepackage{tikz} 
+\usetikzlibrary{backgrounds,fit,decorations.pathreplacing, positioning, calc}
+
+\newcommand{\qreg}[1]{\ensuremath{\left|#1\right\rangle}}
+\newcommand{\qregfun}[2]{\qreg{#1} \rightarrow \qreg{#2}}
+\newcommand{\qregv}[2]{#1_{#2} |#2\rangle}
+
+%\renewcommand{\figurename}{Fig.}
+
+% `operator' will only be used by Hadamard (H) gates here.
+% `phase' is used für controlled phase gates (dots).
+% `surround' is used für the background box.
+\tikzstyle{operator} = [draw,fill=white,minimum size=1.5em] 
+\tikzstyle{cnot} = [draw,circle,minimum size=0.5em]  % TODO: das Kreuz in der Mitte
+\tikzstyle{phase} = [fill,shape=circle,minimum size=5pt,inner sep=0pt]
+\tikzstyle{surround} = [draw=black]
+\tikzset{%
+  block/.style    = {draw, thick, rectangle, minimum height = 4em,
+    minimum width = 4em},
+    }
+\DeclareMathOperator{\NOT}{NOT}
+\DeclareMathOperator{\CNOT}{CNOT}
+
+\title{Quantenberechnungen - Einführung}
+\author{Gunnar Bergmann}
+\date{16.6.2017}
+
+\newcommand{\pictureDeutschAlgo}{
+    \begin{tikzpicture}
+    % Qubits
+        \node[left] at (0,0) (q1) {\qreg 0};
+        \node[left] at (0,-1) (q2) { \qreg 1 };
+        %
+        \node[operator, right=of q1] (h11) {$H$} edge [-] (q1);
+        \node[operator, right=of q2] (h12) {$H$} edge [-] (q2);
+
+        \node[right, right=of h11] (uf11)  {$x$}     edge [-] (h11);
+        \node[right, right=of h12] (uf12)  {$y$}    edge [-] (h12);
+        \node[right=5em of uf11, left] (uf21)  {$x$};
+        \node[right=5em of uf12, left] (uf22)   {$y \oplus f(x)$};
+
+        \node (text) at ($(uf22)!0.5!(uf11)$) {$U_f$};
+
+        \node[operator, right=of uf12] (h21) at (5,0) {$H$} edge [-] (uf21);
+        \node[right] (out1) at (8,0) {} edge [-] (h21);
+        \node[right] (out2) at (8,-1) {} edge [-] (uf22);
+
+        \begin{pgfonlayer}{background} 
+        \node[surround] (background) [fit = (uf11) (uf12) (uf21)] {};
+        \end{pgfonlayer}
+        %
+    \end{tikzpicture}
+    }
+
+\newcommand{\pictureCNOTa}{
+      \begin{tikzpicture}
+    %
+    %
+    % Qubits
+        \node[left] at (0,0) (q1) {\qreg{\psi}};
+        \node[left] at (0,-1) (q2) {\qreg{\varphi}};
+        %
+        % Column 3
+        \node[phase] (phase11) at (1,0) {} edge [-] (q1);
+        \node[operator] (phase12) at (1,-1) {$X$} edge [-] (q2);
+        \draw[-] (phase11) -- (phase12);
+        %
+        % Column 4
+        \node[right] (out1) at (2,0) {\qreg{\psi}} edge [-] (phase11);
+        \node[right] (out2) at (2,-1) {$\qreg{\varphi} \oplus \qreg{\psi}$} edge [-] (phase12);
+        %
+    \end{tikzpicture}
+    }
+
+
+\newcommand{\pictureCNOTb}{
+    \begin{tikzpicture}[scale=1.0]
+    %
+    %
+    % Qubits
+        \node[left] at (0,0) (q1) {\qreg{\psi}};
+        \node[left] at (0,-1) (q2) {\qreg{\varphi}};
+        %
+        % Column 3
+        \node[phase] (phase11) at (1,0) {} edge [-] (q1);
+        \node[cnot] (phase12) at (1,-1) {} edge [-] (q2);
+        \draw[-] (phase11) -- (phase12);
+        %
+        % Column 4
+        \node[right] (out1) at (2,0) {\qreg{\psi}} edge [-] (phase11);
+        \node[right] (out2) at (2,-1) {$\qreg{\varphi} \oplus \qreg{\psi}$} edge [-] (phase12);
+        %
+    \end{tikzpicture}
+    }
+
+\newcommand{\pictureHadamard}{
+      \begin{tikzpicture}[scale=1.0]
+        \node at (0,0) (q1) {};
+        \node[operator] at (1,0) (h1) {$H$};
+        \node at (2,0) (out1) {};
+
+          \draw[-] (q1) -- (h1) -- (out1);
+        %
+    \end{tikzpicture}
+    }
+
+\newcommand{\pictureToffoli}{
+    \begin{tikzpicture}[scale=1.0]
+    %
+    %
+    % Qubits
+        \node[left] at (0,0) (q1) {$a$};
+        \node[left] at (0,-1) (q2) {$b$};
+        \node[left] at (0,-2) (q3) {$c$};
+        %
+        % Column 3
+        \node[phase] (phase11) at (1,0) {} edge [-] (q1);
+        \node[phase] (phase12) at (1,-1) {} edge [-] (q2);
+        \node[cnot] (phase13) at (1,-2) {} edge [-] (q3);
+        \draw[-] (phase11) -- (phase12) -- (phase13);
+        %
+        % Column 4
+        \node[right] (out1) at (2,0) {$a$} edge [-] (phase11);
+        \node[right] (out2) at (2,-1) {$b$} edge [-] (phase12);
+        \node[right] (out3) at (2,-2) {$c \oplus ab$} edge [-] (phase13);
+        %
+    \end{tikzpicture}
+    }
