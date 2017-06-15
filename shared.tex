@@ -4,6 +4,10 @@
 \newcommand{\qreg}[1]{\ensuremath{\left|#1\right\rangle}}
 \newcommand{\qregfun}[2]{\qreg{#1} \rightarrow \qreg{#2}}
 \newcommand{\qregv}[2]{#1_{#2} |#2\rangle}
+\newcommand{\qregPlus}{\frac{\qreg 0 + \qreg 1}{\sqrt 2}}
+\newcommand{\qregMinus}{\frac{\qreg 0 - \qreg 1}{\sqrt 2}}
+\newcommand{\qbitH}[1]{\left[\frac{\qreg 0 #1 \qreg 1}{\sqrt 2}\right]}
+
 
 %\renewcommand{\figurename}{Fig.}
 
@@ -11,7 +15,7 @@
 % `phase' is used für controlled phase gates (dots).
 % `surround' is used für the background box.
 \tikzstyle{operator} = [draw,fill=white,minimum size=1.5em] 
-\tikzstyle{cnot} = [draw,circle,minimum size=0.5em]  % TODO: das Kreuz in der Mitte
+\tikzstyle{cnot} = [minimum size=0.4em,label=center:$\oplus$]  % TODO: das Kreuz in der Mitte
 \tikzstyle{phase} = [fill,shape=circle,minimum size=5pt,inner sep=0pt]
 \tikzstyle{surround} = [draw=black]
 \tikzset{%
@@ -20,6 +24,13 @@
     }
 \DeclareMathOperator{\NOT}{NOT}
 \DeclareMathOperator{\CNOT}{CNOT}
+
+\DeclareMathOperator{\cP}{P}
+\DeclareMathOperator{\cNP}{NP}
+\DeclareMathOperator{\cPSPACE}{PSPACE}
+\DeclareMathOperator{\cL}{L}
+\DeclareMathOperator{\cBQP}{BQP}
+\DeclareMathOperator{\cBPP}{BPP}
 
 \title{Quantenberechnungen - Einführung}
 \author{Gunnar Bergmann}
@@ -51,6 +62,16 @@
         %
     \end{tikzpicture}
     }
+
+    \newcommand{\CNOTFormula}{\qregfun{\psi, \varphi}{\psi, \varphi \oplus \psi}}
+    \newcommand{\CNOTMatrix}{
+                \begin{bmatrix}
+                    1 & 0 & 0 & 0 \\
+                    0 & 1 & 0 & 0 \\
+                    0 & 0 & 0 & 1 \\
+                    0 & 0 & 1 & 0 \\
+                \end{bmatrix} 
+            }
 
 \newcommand{\pictureCNOTa}{
       \begin{tikzpicture}
@@ -126,3 +147,36 @@
         %
     \end{tikzpicture}
     }
+
+\newcommand{\hadamardPlus}{
+    \ensuremath{
+        \qreg + = H \cdot \qreg 0 = H \cdot 
+        \begin{pmatrix}
+            1 \\ 0
+        \end{pmatrix}
+        = 
+        \frac{1}{\sqrt 2}
+        \begin{pmatrix}
+            1 \\ 1
+        \end{pmatrix}
+        = 
+        \frac{\qreg 0 + \qreg 1}{\sqrt 2}
+    }
+}
+
+\newcommand{\hadamardMinus}{
+    \ensuremath{
+        \qreg - = H \cdot \qreg 1 = H \cdot 
+        \begin{pmatrix}
+            0 \\ 1
+        \end{pmatrix}
+        = 
+        \frac{1}{\sqrt 2}
+        \begin{pmatrix}
+            1 \\ -1
+        \end{pmatrix}
+        = 
+        \frac{\qreg 0 - \qreg 1}{\sqrt 2}
+    }
+}
+

@@ -6,12 +6,12 @@
 \usepackage{xcolor}   			%Farbige Schrift ermöglichen
 \usepackage{amsmath}  			%Zusätzliche Mathebefehle
 \usepackage{mathtools} 
-\usepackage[figurename=Figur,labelfont=bf]{caption}
+\usepackage[figurename=Abbildung,labelfont=bf]{caption}
+\usepackage{hyperref}
 
 \input{../shared.tex}
 
 \begin{document}
-
 
 \title{Quantenberechnungen - Einführung}
 \subtitle{[Seminar Computing Beyond Turing]}
@@ -24,6 +24,8 @@ Gunnar Bergmann\\
        \email{gunnar.bergmann@student.uni-luebeck.de}
 }
 
+% TODO: Quellen
+
 \date{16.6.2017}
 
 \maketitle
@@ -32,18 +34,18 @@ Gunnar Bergmann\\
 In dieser Ausarbeitung werden die Grundlagen über Quantencomputer vorgestellt.
 Es werden grundlegende Begriffe und mathematische Formulierungen zur Beschreibung von
 Quantenrechner vorgestellt.
-Es wird eine Einteilung der Berechenbarkeit und Komplexität gegeben und am Beispiel von Deutschs Algorithmuses erläutert, wie man die Eigenschaften von Quanten ausnutzen kann, um Berechnungen zu parallelisieren.
+Es wird eine Beurteilung der Berechenbarkeit und Komplexität gegeben und am Beispiel von 
+Deutschs Algorithmuses erläutert, wie man die Eigenschaften von Quantenzuständen ausnutzen kann, um Berechnungen zu parallelisieren.
 Desweiteren werden einige Probleme erklärt, die die Konstruktion von Quantenalgorithmen erschweren.
 
 \end{abstract}
 
 \section{Einführung}
 
-
-In der Quantenmechanik sind Quanten nicht auf klassische Zustände beschränkt, sondern können auch Superpositionen einnehmen.
+In der Quantenmechanik sind Quantensysteme nicht auf klassische Zustände beschränkt, sondern können auch Superpositionen einnehmen.
 Das bedeutet, sie sind in mehreren Zuständen gleichzeitig. Quanten in Superposition können immer noch mit anderen
 Quantensystemen interagieren, aber es ist nicht möglich, den Zustand direkt zu messen. Stattdessen wechselt das 
-Quantensystem beim Messen in einen klassischen Zustand.
+Quantensystem beim Messen in einen Basiszustand.
 
 Quantencomputer benutzen die Eigenschaften der Quantenmechanik, um über Quantenparallelismus bei bestimmten Problemen
 schneller rechnen zu können, als klassische Computer.
@@ -51,66 +53,68 @@ schneller rechnen zu können, als klassische Computer.
 Wir werden sehen, dass Quantenrechner jeden anderen Rechner simulieren können, aber bestimmte Algorithmen Quantenparallelismus ausnutzen können, um exponentiell viele gleichzeitige Berechnungen durchzuführen.
 
 Quantenmechanik hat oft unintuitive Effekte, aber mathematische Modelle erlauben
-eine akkurate Beschreibung und Vorhersage von beobachtbarem Verhalten.
+eine akkurate Beschreibung und Vorhersage von experimentell beobachtbarem Verhalten.
 Diese unintuitive Natur von Quanten erschwert die Konstruktion von Quantenalgorithmen.
 
-Es gibt nur wenige nützliche Algorithmen. Am wichtigsten ist davon die Simulation von Quantensystemen zu
-Forschungszwecken, Shors Algorithmus zur Faktorisierung in Polynomialzeit und Grovers Algorithmus, um
-einen Suchraum in Laufzeit $\mathcal{O}(\sqrt N)$ zu durchsuchen.
+Ein wichtiges Anwendungsgebiet für Quantenrechner ist die Simulation von
+Quantensystemen zu Forschungszwecken. \linebreak
+Außerhalb dessen sind nur wenige Algorithmen bekannt, welche die Vorteile von Quantencomputern ausnutzen können. 
+Am bekanntesten sind Shors Algorithmus zur Faktorisierung in Polynomialzeit und Grovers Algorithmus, der
+einen Suchraum der Größe $N$ in Laufzeit $\Theta(\sqrt N)$ durchsucht \cite{Nielsen}.
 
-Alle diese Algorithmen gehen über dieses Paper hinaus. Stattdessen wird hier ein künstliches Problem, ohne
-reale Anwendungsgebiete, betrachtet, dass in Exponentialzeit auf einem klassischen Rechner, aber
-in Linearzeit auf einem Quantenrechner lösen lässt
+Alle diese Algorithmen gehen über diese Arbeit hinaus. Stattdessen wird hier ein künstliches Problem betrachtet, das
+keine realen Anwendungsgebiete hat, aber in Linearzeit auf einem Quantenrechner gelöst werden kann, während ein
+klassischer Rechner Exponentialzeit benötigt.
 
 \section{Quantenbits}
 
-Quantenbits (gewöhnlich Qubits genannt) generalizieren klassische Bits.
+Quantenbits (gewöhnlich Qubits genannt) generalisieren klassische Bits.
 Es gibt zwei Basiszustände, $\qreg 0$ und $\qreg 1$, die man wie klassische Bits interpretieren und verwenden kann.
 
 Anders als gewöhnliche Bits erlauben Qubits Superpositionen, die Anteile von beiden Zuständen gleichzeitige enthalten.
 
 Ein mathematisches Modell für ein Qubit ist ein Vektorraum
-    \[\qreg \psi = a \qreg 0 + b \qreg 1 =
+    \[\qreg \psi = \alpha \qreg 0 + \beta \qreg 1 =
     \begin{pmatrix}
-        a \\ b
+        \alpha \\ \beta
     \end{pmatrix}
     \]
-mit  \(a, b \in \mathbb C \) und $|a|^2 + |b|^2 = 1$, wobei $\qreg 0$ und $\qreg 1$ eine Orthonormalbasis bilden.
+mit  \(\alpha, \beta \in \mathbb C \) und $|\alpha|^2 + |\beta|^2 = 1$, wobei \qreg 0 und \qreg 1 eine Orthonormalbasis bilden.
+Für viele Probleme, insbesondere alle in dieser Ausarbeitung thematisierten, reichen \(\alpha, \beta \in \mathbb R \) aus.
 
-Durch geeignete Wahl von $a$ und $b$ können dann die Superpositionen modelliert werden.
+Durch geeignete Wahl von $\alpha$ und $\beta$ können dann die Superpositionen modelliert werden.
 Häufig tritt zum Beispiel der Zustand $\qreg + = \frac{\qreg 0 + \qreg 1}{\sqrt 2}$ auf.
 
 Es ist nicht möglich, den exakten Zustand eines Qubits zu bestimmen.
-Stattdessen ergibt eine Messung $\qreg 0$ mit Wahrscheinlichkeit $a^2$ und
-$\qreg 1$ mit Wahrscheinlichkeit $b^2$.
+Stattdessen ergibt eine Messung $\qreg 0$ mit Wahrscheinlichkeit $|\alpha|^2$ und
+$\qreg 1$ mit Wahrscheinlichkeit $|\beta|^2$.
 Darüber hinaus verändert die Messung den Zustand des Qubits selber und
 das Qubit nimmt dann den Zustand $\qreg 0$ bzw. $\qreg 1$ an.
 
 Durch Messung kann man also nicht den genauen Zustand bestimmen und erhält anschließend nur noch die Basiszustände,
 die keine weiteren Infürmationen als klassische Bits enthalten.
-Wie in \ref{DeutschsAlgo} noch an einem Beispiel gezeigt wird, kann man aber mit Qubits in Superpositionen
-weiterrechnen und so Quantenparallelismus erhalten, indem mit beiden Zuständen gleichzeitig gerechnet wird.
+Wie in \autoref{DeutschsAlgo} noch an einem Beispiel gezeigt wird, kann man aber mit Qubits in Superpositionen
+weiterrechnen und so Quantenparallelismus erhalten.
 
-Theoretisch kann man Qubits auch in andere Basen als $\qreg 0$ und $\qreg 1$ angeben und messen. Sämtliche Eigenschaften
-bleiben erhalten, aber der Einfachheit halber beschränkt man sich üblicherweise auf $\qreg 0$ und $\qreg 1$.
-
+Theoretisch kann man Qubits auch in andere Basen als \qreg 0 und \qreg 1 angeben und messen. Sämtliche Eigenschaften
+bleiben erhalten, aber der Einfachheit halber beschränkt man sich üblicherweise auf \qreg 0 und \qreg 1.
 
 Betrachtet man ein System aus mehreren Qubits, bezeichnet man dieses als Quantenregister und stellt es
 gut lesbar in einer Formel dar.
 
 Zum Beispiel besteht das Quantenregister 
 \[
-    \qreg \psi = \qregv a {00} + \qregv a {01} + \qregv a {10} + \qregv a {11} = 
+    \qreg \psi = \qregv \alpha {00} + \qregv \alpha {01} + \qregv \alpha {10} + \qregv \alpha {11} = 
 \begin{pmatrix}
-    a_{00}  \\
-    a_{01}  \\
-    a_{10}  \\
-    a_{11}  \\
+    \alpha_{00}  \\
+    \alpha_{01}  \\
+    \alpha_{10}  \\
+    \alpha_{11}  \\
 \end{pmatrix}
 \]
 mit
 \[
-    |a_{00}|^2 + |a_{01}|^2 + |a_{10}|^2 + |a_{11}|^2 = 1
+    |\alpha_{00}|^2 + |\alpha_{01}|^2 + |\alpha_{10}|^2 + |\alpha_{11}|^2 = 1
 \]
 aus zwei Qubits.
 
@@ -119,38 +123,40 @@ Verallgemeinert ist also das Quantenregister aus $n$ Qubits durch
     \qreg \psi = \sum_{x \in {\{0,1\}}^n} \qregv c {x},
     \sum_{x \in {\{0,1\}}^n} |c_x|^2 = 1
 \]
-definiert und hat eine Gesamtanzahl von $2^n$ mögliche Zustände.
+definiert und hat eine Gesamtanzahl von $2^n$ möglichen Zuständen.
 
 \section{Quantenschaltkreise}
 \label{qcircuits}
 
+Quantengatter sind analog zu klassischen Logikgattern die kleinsten Bausteine für Schaltungen.
+
 Einige Quantengatter können über das Generalisieren von klassischen Gattern erzeugt werden.
 
 Eines der einfachsten Schaltkreise ist das NOT-Gatter, das als Qubit folgendermaßen aussieht:
-    \[NOT(a \qreg 0 + b \qreg 1)  = b \qreg 0 + a \qreg 1\]
+    \[NOT(\alpha \qreg 0 + \beta \qreg 1)  = \beta \qreg 0 + \alpha \qreg 1\]
 
 Es ist eine Verallgemeinerung des klassischen NOT-Gatters, denn offensichtlich gelten
-\begin{eqnarray*}
-    NOT(\qreg 0) = \qreg 1 \\
-    NOT(\qreg 1) = \qreg 0
-\end{eqnarray*}
+\begin{align*}
+    NOT(\qreg 0) &= \qreg 1 \\
+    NOT(\qreg 1) &= \qreg 0
+\end{align*}
 
 und der Tausch der Komponenten verändert die Länge des Vektors nicht, sodass auch die Gesamtwahrscheinlichkeit
-von $1 = |a|^2 + |b|^2$ erhalten bleibt.
+von $1 = |\alpha|^2 + |\beta|^2$ erhalten bleibt.
 
-Aufgrund von Eigenschaften, deren Umfang über diese Ausarbeitung hinus gehen, interagieren Quantensysteme immer 
-in linearer Weise.
-
-Im Falle von klassischen Gattern reicht eine Wahrheitstabelle, aber für Quantenrechner ist
-dieses aufgrund der kontinuierlichen Zustandskombinationen nicht mehr möglich. Stattdessen werden Gatter über eine Matrix definiert,
+Im Falle von klassischen Gattern reicht eine Wahr\-heits\-tabelle, aber für Quantenrechner ist
+dieses aufgrund der überabzählbaren Zustandskombinationen nicht mehr möglich. Stattdessen werden Gatter über eine Matrix definiert,
 sodass die Anwendung als Multiplikation mit dem Vektor des Quantenregisters beschrieben wird.
+
+Aufgrund von Eigenschaften, deren Umfang über diese Ausarbeitung hinaus gehen, interagieren Quantensysteme immer 
+in linearer Weise. Deswegen ist die Darstellung als Matrix ausreichend \cite{Barenco}.
 
 Diese Matrizen müssen die Länge des Vektors erhalten, damit sich die Wahrscheinlichkeiten auch nach der Anwendung 
 noch auf 1 aufsummieren.
 
-Dafür müssen die Matrizen unitär sein. Eine Matrix $U$ ist unitär, wenn für die konjugiert transponierte $U^{\dagger}$ das
+Dafür müssen die Matrizen unitär sein. Eine Matrix $U$ ist unitär, wenn für die konjugiert transponierte Matrix $U^{\dagger}$ das
 Inverse ist, also $U^\dagger \cdot U = U \cdot U^\dagger = I$, wobei I die Einheitsmatrix entsprechender Größe bezeichnet.
-Dieses bedeutet auch, dass es zu jedem Quantengatter ein Inverses gibt und somit jede Berechnung umkehrbar ist.
+Dies bedeutet auch, dass es zu jedem Quantengatter ein Inverses gibt und somit jede Berechnung umkehrbar ist.
 
 Wenn man die Anwendung des NOT-Gatter als Matrix-Vektor-Multiplikation schreibt, erhält man:
 \[
@@ -159,40 +165,36 @@ Wenn man die Anwendung des NOT-Gatter als Matrix-Vektor-Multiplikation schreibt,
     1 & 0 \\
 \end{bmatrix} \cdot 
 \begin{pmatrix}
-    a \\ b
+    \alpha \\ \beta
 \end{pmatrix} = 
 \begin{pmatrix}
-    b \\ a
+    \beta \\ \alpha
 \end{pmatrix} 
 \]
 
-Offensichtlich ist $\NOT^\dagger = \NOT$ das Inverse.
+Offensichtlich ist $\NOT^\dagger = \NOT$ das Inverse und somit ist die Matrix unitär.
 
-Da jedes Gatter invertiert werden kann, muss Eingabe- und Ausgabegröße gleich sein. 
+Da jedes Gatter invertiert werden kann, müssen Eingabe- und Ausgabegröße gleich sein. 
 Aufgrund dieser Einschränkung ist es nicht möglich, Bits zu kopieren, wie es im Fall klassischer Bits durch 
-Verbinden von Kabeln sehr einfach möglich ist. 
+Verbinden mehrerer Kabel sehr einfach möglich ist. 
 Diese Operation ist auf Quantenrechnern im Allgemeinen nicht mehr möglich und wird in 
-\ref{noclone} noch genauer untersucht.
+\autoref{noclone} noch genauer untersucht.
 
-Deswegen sind auch bestimmte grundlegende Operationen wie AND, OR und XOR nicht ohne weiteres möglich. 
-Dieses lässt sich aber über einfügen weiterer Eingaben, sogenannter Kontrollbits, umgehen.
+Ebenso sind auch bestimmte grundlegende Operationen wie AND, OR und XOR nicht ohne weiteres möglich. 
+Dies lässt sich aber über Einfügen weiterer Eingaben, sogenannter Kontrollbits, umgehen.
 
 Ein Beispiel ist das CNOT. Es ist eine Verallgemeinerung des XOR-Gatters, stellt die Funktion
 \[
-    \qregfun{a, b}{a \oplus b, b}
+    \CNOTFormula
 \]
 
-dar und hat die Matrix
+dar. In \autoref{fig:cnot} wird das CNOT-Gatter als Schaltplan dargestellt.
+Als Matrix dargestellt ist CNOT
 \[
-\begin{bmatrix}
-    1 & 0 & 0 & 0 \\
-    0 & 1 & 0 & 0 \\
-    0 & 0 & 0 & 1 \\
-    0 & 0 & 1 & 0 \\
-\end{bmatrix} 
+    \CNOTMatrix
 \]
 
-CNOT ist unitär, da $\CNOT \cdot \CNOT = I$.
+CNOT ist unitär und es gilt $\CNOT^\dagger = \CNOT$.
 
 \begin{figure}
   \centerline{
@@ -201,14 +203,17 @@ CNOT ist unitär, da $\CNOT \cdot \CNOT = I$.
     \pictureCNOTb
   }
   \caption{
-    Verschiedene Darstellungen des CNOT-Gatters. Control-Bits werden als Punkte gezeichnet.
+      Verschiedene Darstellung des CNOT-Gatters als Schaltplan. CNOT wird als NOT-Gatter gezeichnet, auf das
+      noch ein weiteres Kontroll-Bit einwirkt. Da CNOT ein sehr häufiges Gatter ist, gibt es ein
+      spezielles Symbol, das rechts dargestellt wird.
   }
+  \label{fig:cnot}
 \end{figure}
 
-Ähnliche Generalisierungen sind auch für andere Gatter möglich. In \ref{Simulate} wird gezeigt, wie jedes
+Ähnliche Generalisierungen sind auch für andere Gatter möglich. In \autoref{Simulate} wird gezeigt, wie jedes
 klassische Gatter über eine bestimmte Schaltung simuliert werden kann.
 
-% TODO: no loops
+Für gewöhnlich werden bei Quantenalgorithmen nur azyklische Gatter betrachtet.
 
 Ein weiteres, wichtiges Gatter für viele Algorithmen ist das Hadamard-Gatter
 \[
@@ -228,64 +233,48 @@ Auf den Eingaben \qreg 0 und \qreg 1 mischt das Hadamard-Gatter die beiden
 Zustände zu gleichen Anteilen.
 
 \[
-    \qreg + = H \cdot \qreg 1 = H \cdot 
-    \begin{pmatrix}
-        1 \\ 0
-    \end{pmatrix}
-    = 
-    \frac{1}{\sqrt 2}
-    \begin{pmatrix}
-        1 \\ 1
-    \end{pmatrix}
-    = 
-    \frac{\qreg 0 + \qreg 1}{\sqrt 2}
+\hadamardPlus
 \]
 
 \[
-    \qreg - = H \cdot \qreg 0 = H \cdot 
-    \begin{pmatrix}
-        0 \\ 1
-    \end{pmatrix}
-    = 
-    \frac{1}{\sqrt 2}
-    \begin{pmatrix}
-        1 \\ -1
-    \end{pmatrix}
-    = 
-    \frac{\qreg 0 - \qreg 1}{\sqrt 2}
+\hadamardMinus
 \]
 
-Beim Messen von \qreg + und \qreg -  erhält man 0 und 1 mit jeweils gleichen Wahrscheinlichkeiten.
-Hierbei kann man erkennen, dass es auch durch wiederholte
-Messungen nicht ohne weiteres möglich ist, die beiden Zustände zu unterscheiden.
+Beim Messen von \qreg + und \qreg -  erhält man 0 und 1 mit jeweils gleichen Wahrscheinlichkeiten, aber
+man kann \qreg + und \qreg - gebrauchen, um mit beiden Zuständen gleichzeitig
+zu rechnen und so Quantenparallelismus ausnutzen zu können.
+In \autoref{DeutschsAlgo} wird dies auch an einem Beispielalgorithmus erklärt.
 
 \section{No cloning theorem}
 \label{noclone}
 
-In klassischen Schaltkreisen kann ein Bit einfach kopiert werden indem man mehrere Kabel befestigt. Dieses ist
+In klassischen Schaltkreisen kann ein Bit einfach kopiert werden indem man mehrere Kabel an einer Ausgabe befestigt. Dies ist
 bei Quantenbits nicht mehr möglich. Es gibt keinen Weg, um im Allgemeinen ein Bit zu klonen.
 
 Jedes Quantengatter ist reversibel, da die zugehörige Matrix unitär sein muss. 
-Eine Klon-funktion wie $\qregfun{\varphi\psi}{\psi\psi}$ ist nicht reversibel und damit ist Klonen von Quanten über
-Quantengatter nicht möglich. Auch sonst ist nicht möglich Quanten zu klonen.
+Eine Klon-Funktion wie $\qregfun{\psi,\varphi}{\psi,\psi}$ ist nicht reversibel und damit ist Klonen von Quanten über
+Quantengatter nicht möglich. 
+Dies ist auch über andere Effekte nicht möglich, denn es ist fundamentale Eigenschaft von Quanten, 
+dass sie nicht exakt kopiert werden können, die über diese Ausarbeitung hinaus geht \cite{Barenco}.
 
-Dieses kann wie ein Widerspruch mit dem vorher definierten CNOT aussehen, denn für $a=\qreg 0$ erhält man
-genau $\qregfun{0, \psi}{\psi, \psi}$.
-Es ist allerdings kein Widerspruch, wie recht einfach gezeigt werden kann:
-Für $\psi = a \qreg 0 + b \qreg 1$ ergibt die Anwendung von vorherigen CNOT-Gattern genau die Ausgabe
+Diese Aussage kann wie ein Widerspruch mit dem vorher definierten CNOT aussehen, denn für $\varphi=\qreg 0$ erhält man
+genau $\qregfun{\psi,0}{\psi, \psi}$.
+
+Es ist allerdings doch kein Widerspruch, wie recht einfach gezeigt werden kann:
+Für $\psi = \alpha \qreg 0 + \beta \qreg 1$ ergibt die Anwendung des vorherigen CNOT-Gatters genau die Ausgabe
 \[
-    a \qreg{00} + b \qreg{11} 
+    \alpha \qreg{00} + \beta \qreg{11} 
 \]
 aber für zwei komplett unabhängige Quanten mit Wert $\psi$ erhält man
 \[
-    \qreg{\psi \psi} = a^2 \qreg{00} + ab \qreg{01} + ab \qreg{10} + b^2 \qreg{11} 
+    \qreg{\psi \psi} = \alpha^2 \qreg{00} + \alpha\beta \qreg{01} + \alpha\beta \qreg{10} + \beta^2 \qreg{11} 
 \]
 
-Dieses ist nur ein Klon für $a=0$ und $b=0$.
+Dieses ist nur ein Klon, wenn $a=0$ oder $b=0$ gilt, also die Qubits nur in den Zuständen $\pm \qreg 0$ oder $\pm \qreg 1$ sind.
 Spezifische Bits können also sehr wohl geklont werden, allerdings übersteigt der dabei kopierte Informationsgehalt
 nicht denen klassischer Bits.
 
-\section{Simulation klassischer Computer}
+\section{Simulation klassischer \\ Computer}
 \label{Simulate}
 
 Das Toffoli-Gatter spielt eine zentrale Role in der Simulation klassischer Computer.
@@ -294,71 +283,81 @@ Es berechnet die Funktion.
     \qregfun{a, b, c}{a, b, c\oplus (a\wedge b)}
 \]
 
+Die entsprechende Matrix ist sehr groß und nur wenig instruktiv. Stattdessen ist
+die Funktionsweise an der Zeichnung \ref{fig:toffoli} verdeutlicht.
+
 \begin{center}
     \pictureToffoli
     \captionof{figure}{Toffoli-Gatter}
+    \label{fig:toffoli}
 \end{center}
 
 
-Das Toffoli-Gatter hat ein Inverses. Genauer gesegt, ist es sein eigenes Inverses, denn zweimal Anwenden
+Das Toffoli-Gatter ist unitär. Es ist sein eigenes Inverses, denn zweimal Anwenden
 ergibt
 \[
-    \qregfun{a, b, c\oplus (a\wedge b) \oplus (a\wedge b)}{a, b, c}
+    \qreg{a, b, c\oplus (a\wedge b) \oplus (a\wedge b)} = \qreg{a, b, c}
 \]
 
 
-Eine Menge von Toffoli-Gattern kann jeden klassischen Schaltkreis simulieren. Für diese werden nur die QBits
+Eine Menge von Toffoli-Gattern kann jeden klassischen Schaltkreis simulieren. Für diese werden nur die Qubits
 $\qreg 0$ und $\qreg 1$ verwendet, aber keine weiteren Quantenzustände.
 
-Als erstes zeigen wir, dass das Toffoli-gatter zum Kopieren dieser Bits eingesetzt werden kann.
-In \ref{noclone} haben wir gezeigt, dass das CNOT-Gatter trotz des \emph{no-cloning-theorems} klassische
-Bits klonen kann. 
-Setzt man $a = \qreg 1, c = \qreg 0$, erhält man die Funktion $\qregfun{1,b,0}{1,b,b}$,
+Als erstes zeigen wir, dass das Toffoli-Gatter zum Kopieren dieser Bits eingesetzt werden kann.
+In \autoref{noclone} haben wir gezeigt, dass das CNOT-Gatter trotz des \emph{no-cloning-theorems} klassische
+Bits klonen kann und dieses ist durch das Toffoli-Gatter ebenso möglich, indem man die
+Eingangsbits entsprechend setzt.
+Durch die Wahl $a = \qreg 1, c = \qreg 0$, erhält man die Funktion $\qregfun{1,b,0}{1,b,b}$,
 
-Wenn man stattdessen $c = \qreg 1$ setzt, erhält man $\qregfun{a,b,1}{a,b, \neg (a\wedge b)}$
-und kann über dieses das NAND-Gatter simulieren
-NAND ist ein universelles Gatter, d.h. man kann jedes andere logische Gatter über Folgen von NANDs realisiert werden.
+Wenn man stattdessen $c = \qreg 1$ setzt, erhält man \linebreak $\qregfun{a,b,1}{a,b, \neg (a\wedge b)}$
+und kann über dieses das NAND-Gatter simulieren.
+NAND ist in der klassischen Logik ein universelles Gatter, d.h. 
+jede andere logische Funktion kann über Folgen von NANDs realisiert werden.
 
-Damit haben wir gezeigt, dass jeder klassischer Schaltkreis und damit auch klassischer Computer nur mit Toffoli-Gatter
-ohne Laufzeitverlust simuliert werden kann.
+Mit dem NAND-Gatter und der Fähigkeit zu kopieren kann dann jeder klassischer Schaltkreis und damit 
+auch klassischer Computer nur mit Toffoli-Gatter simuliert werden. 
+Dafür werden nur konstant viele Quantengatter benötigt, wodurch sich die Komplexität
+der Berechnungen nicht ändert.
 
 \section{Deutschs Algorithmus}
 \label{DeutschsAlgo}
 
-Deutschs Algorithmus ist ein einfacher Algorithmus, der Quantenparallelismus zeigen kann. 
-Hier wird eine vereinfachte Variante gezeigt.
+Deutschs Algorithmus ist ein einfacher Algorithmus, der \linebreak Quantenparallelismus zeigen kann. 
+Der von Deutsch vorgestellte Algorithmus ist randomisiert, aber hier wird eine vereinfachte Variante
+gezeigt, die das gleiche Problem deterministsch lösen kann.
 
 Sei dazu $ f(x) : \{0,1\} \rightarrow \{0,1\} $ eine beliebige Funktion. $f$ ist unbekannt, es kann aber
 ein Quantenschaltkreis dazu konstruiert werden.
 
-Deutschs Algorithmus testet nun, ob $f(0) \neq f(1)$, bzw. $f(1) \oplus f(0)$. Dieses könnte ein klassischer
+Deutschs Algorithmus testet nun, ob $f(0) \neq f(1)$, bzw. berechnet $f(1) \oplus f(0)$. Dieses Problem könnte ein klassischer
 Rechner durch Auswertung der beiden Funktionsaufrufe sehr einfach entscheiden, aber hier werden Eigenschaften
 der Quantenmechanik benutzt, um $f$ nur einmal auszuwerten.
 
 Dazu wird als erstes ein Quantenschaltkreis $U_f$ auf Zweibitregistern konstruiert, der die Funktion 
 $\qregfun{x,y}{x, y \oplus f(x)}$ umsetzt. 
 
-Durch $y = \qreg 0$ kann offensichtlich $f(x)$ berechnet werden. Durch ein Hadamard-Gatter und kann man nun 
+Durch $y = \qreg 0$ kann offensichtlich $f(x)$ berechnet werden. Mit Hilfe eines Hadamard-Gatters kann man nun 
 $x = \qreg + = \frac{\qreg 0 + \qreg 1}{\sqrt 2}$ setzen
-und wendet dann $U_f$ an. Das Ergebnis ist
+und wendet anschließend $U_f$ an. Das Ergebnis ist
 \[
-    \qreg{x, f(x)} = \frac{\qreg{0, f(0)} + \qreg{1, f(0)}}{\sqrt 2}
+    \qreg{x, f(x)} = \frac{\qreg{0, f(0)} + \qreg{1, f(1)}}{\sqrt 2}
 \]
 
 Hier kann man bereits sehen, dass ein einzelner Schaltkreis ausreicht, um über Quantenparallelismus sowohl $f(0)$, als auch $f(1)$ 
 zu berechnen, allerdings kann man dieses Ergebnis noch nicht nutzen, da man beim Messen der Ausgabe jeweils nur \qreg{0, f(0)} oder
 \qreg{1, f(1)} erhält.
 
-\newcommand{\qbitH}[1]{\left[\frac{\qreg 0 #1 \qreg 1}{\sqrt 2}\right]}
-
-Bei Deutschs Algorithmus wird nun eine weitere Eigenschaft der Quantenmechanik, die
-sogenannte Interferenz genutzt. Dafür wird über ein weiteres Hadamard-Gatter $y$ auf $\qreg - = \frac{\qreg 0 - \qreg 1}{\sqrt 2}$
+In Deutschs Algorithmus wird nun eine weitere Eigenschaft der Quantenmechanik, die
+sogenannte Interferenz genutzt. Dafür wird über ein weiteres Hadamard-Gatter $y$ auf \linebreak 
+$\qreg - = \frac{\qreg 0 - \qreg 1}{\sqrt 2}$
 gesetzt. Anwenden von $U_f$ ergibt
 \begin{equation}
     U_f \cdot \left( \qreg x \qbitH - \right) = (-1)^{f(x)} \qreg x \qbitH - 
 \end{equation}
 
-Nach diesen Vorüberlegungen kann der eigentliche Algorithmus beginnen.
+Nach diesen Vorüberlegungen kann der eigentliche Algorithmus beginnen. Er ist im Schaltplan
+in \autoref{fig:deutschs} dargestellt.
+
 Als erstes wird ein Quantenregister \qreg{01} über zwei Hadamard-Gatter zu 
 \begin{equation}
 \qreg {\psi_1} = \qbitH+\qbitH- 
@@ -379,80 +378,98 @@ Anwendung eines weiteren Hadamard-Gatters ergibt
         \qreg{\psi_3} &= \left\{\begin{array}{lr}
             \pm \qreg 0 \qbitH- & \text{für } f(0) = f(1) \\[1.5em]
             \pm \qreg 1 \qbitH- & \text{für } f(0) \neq f(1) 
-        \end{array}\right\} \\[1.5em] &= \pm \qreg{f(0) \oplus f(1)} \qbitH+
+        \end{array}\right\} \\[1.5em] &= \pm \qreg{f(0) \oplus f(1)} \qbitH-
     \end{split}
 \end{equation}
 
-Durch Messung des ersten Qubits erhält man nun $f(0) \oplus f(1)$, wobei $f$ während des
+Durch Messung des ersten Qubits erhält man nun \linebreak $f(0) \oplus f(1)$, wobei $f$ während des
 ganzen Durchganges nur einmal ausgewertet wurde.
 
 \begin{figure}
     \pictureDeutschAlgo
-    \caption{figure}{Deutschs Algorithmus. $H$ symbolisiert Hadamard-Gatter.}
+    \caption{Deutschs Algorithmus als Schaltplan. Die Eingabewerte werden über Hadamard-Gatter transformiert, bevor die
+    Funktion $f$ ausgerechnet wird.}
+    \label{fig:deutschs}
 \end{figure}
 
 \section{Deutsch-Jozsa Algorithmus}
 
 Der Deutsch-Jozsa Algorithmus ist eine Verallgemeinerung von Deutschs Algorithmus.
-Gegeben eine n-bit Funktion $f : \{0,1\}^n \rightarrow \{0,1\} $, der Algorithmus entscheidet, ob $f$ eine konstante Funktion
-ist (immer den gleichen Wert zurückgibt) oder balanziert (in der Hälfte der Fälle 0, in der anderen 1).
+Gegeben eine $n$-bit Funktion \linebreak $f : \{0,1\}^n \rightarrow \{0,1\} $, entscheidet 
+der Algorithmus, ob $f$ eine konstante Funktion
+ist (immer den gleichen Wert zurückgibt) oder balanciert (in der Hälfte der Fälle 0, in der anderen 1). 
+Andere Fälle treten nicht auf.
 
-Die Lösung des Problems ist analog zu Deutschs Algorithmus, aber verwendet statt $x$ $n$ Qubits, die alle über Hadamard-Gatter
-in Superposition gebracht werden.
+Die Lösung des Problems ist analog zu Deutschs Algorithmus, aber statt der Eingabe $x$ werden $n$ Qubits verwendet, 
+die alle über Hadamard-Gatter zuerst in Superposition gebracht werden.
 
 Obwohl das Problem an sich noch keinen realen Nutzen hat, existiert ein Quantenalgorithmus, der die Antwort in einer einfachen
-Auswertung von $f$ bestimmt, während eine klassische Maschine $\Omega(2^n)$ Auswertungen braucht.
+Auswertung von $f$ unter Verwendung von $\Theta(n)$ vielen Qubits bestimmt, 
+während eine klassische Maschine $2^n$ Auswertungen braucht.
 
 \section{Komplexität}
 
-Wie in \ref{qcircuits} gezeigt wurde, kann jeder klassische Computer ohne Effizienzverlust simuliert werden.
+Wie in \autoref{qcircuits} gezeigt wurde, kann jeder klassische Computer effizient simuliert werden.
 
 Umgedreht kann auch ein Quantenalgorithmus auf einem klassischen Computer simuliert werden, indem
 die Komponenten der Quantenregister einzeln berechnet werden. 
 
-Von der Berechenbarkeit gibt es also keinen Unterschied, aber wenn man die effizient berechenbaren Probleme betrachtet,
+Bei der Berechenbarkeit gibt es also keinen Unterschied, aber wenn man die effizient berechenbaren Probleme betrachtet,
 ist der Quantenrechner über Quantenparallelismus möglicherweise effizienter.
 
-Die Klasse $BQP$ (bounded error quantum polynomial time) bezeichnet die Klasse der Probleme, die ein Quantenrechner in 
+Die Klasse BQP (bounded error quantum polynomial time) bezeichnet die Klasse der Probleme, die ein Quantenrechner in 
 Polynomialzeit berechnen kann.
 
-Wie in \ref{qcircuits} gezeigt, gilt $P \subseteq BQP$.
+Wie in \autoref{Simulate} gezeigt wurde, gilt $\cP \subseteq \cBQP$.
 
-Da Quantenrechner über gute Zufallsquellen verfügen, gilt zudem $BPP \subseteq BQP$.
+Quantenrechner verfügen über Zufallsquellen. Misst man ein Qubit im Zustand $\qreg + = \frac{\qreg 0 + \qreg 1}{\sqrt 2}$,
+erhält man die Bits \qreg 0 und \qreg 1 mit einer Wahrscheinlichkeit von jeweils $0.5$.
+Also können Quantencomputer auch randomisierte Algorithmen ohne Zeitverlust 
+umsetzen und zusammen mit der effizienten Simulation von klassischen Computern folgt $\cBPP \subseteq \cBQP$. 
 
-Zusätzlich kann kein Problem, dass nicht in $PSPACE$ liegt effizient in Polynomialzeit gelöst werden.
-Damit gilt also $BQP \subseteq PSPACE$. 
+Simons Problem stellt eine Fragestellung dar, die analog zu Deutschs Algorithmus zeigt, dass
+Quantenrechner auch bei randomisierten Algorithmen mächtiger sind als klassische Computer.
 
-Sollte $P \neq BQP$ gezeigt werden, dann folgt auch $ P \neq PSPACE$.
-Letzteres ist aber ein noch offenes Problem, zu dem schon viele Lösungsversuche unternommen wurden.
-Deswegen ist anzunehmen, dass die genaue Beziehung zwischen $BQP$ und $PSPACE$ auch noch länger offen bleibt.
-Ähnliches gilt für die Untergrenze, denn sollte $BQP = P$ gelten, dann gäbe es mit Shors Algorithmus auch einen 
-effizienten Algorithmus für die Primfaktorzerlegung.
+Zusätzlich kann kein Problem, das nicht in $\cPSPACE$ liegt effizient in Polynomialzeit gelöst werden.
+Damit gilt also $\cBQP \subseteq \cPSPACE$ \cite{Barenco}.
 
 
-% TODO: warum
+Es gilt $\cL \subsetneq \cPSPACE$, aber es ist nicht bekannt, welche der Inklusionen bei 
+$\cL \subseteq \cP \subseteq \cBQP \subseteq \cPSPACE$ echte Teilmengen oder Gleichheiten sind.
 
-Die Beziehung zwischen NP und $BQP$ ist nicht bekannt. Einige Probleme wie Primfaktorzerlegung
+Eine genauere Untersuchung des Verhältnisses zwischen $\cBQP$ und $\cP$ bzw. $\cPSPACE$ kann auf die offenen
+Fragen noch weitere Antworten liefern, denn 
+sollte $\cP \neq \cBQP$ gezeigt werden, dann folgt auch $ \cP \neq \cPSPACE$ \cite{Barenco}.
+
+Andererseits ist die Frage $\cP = \cPSPACE$ aber auch oft untersucht worden und da bisher keine Antwort gefunden wurde,
+ist der entsprechende Beweis vermutlich sehr schwer.
+
+Deswegen ist anzunehmen, dass die genaue Beziehung zwischen $\cBQP$ und $\cPSPACE$ auch noch länger offen bleibt.
+Ähnliches gilt für die Untergrenze, denn sollte $\cBQP = \cP$ gelten, dann gäbe es mit Shors Algorithmus auch einen 
+Polynomialzeitalgorithmus für die Primfaktorzerlegung.
+
+Die Beziehung zwischen $\cNP$ und $\cBQP$ ist nicht bekannt. \linebreak Einige Probleme wie Primfaktorzerlegung
 können zwar in Polynomialzeit von einem Quantenrechner gelöst werden,
-aber bisher wurde noch für kein NP-hartes Problem ein Algorithmus angegeben.
-
-Da Quantenberechnungen häufig randomisierte Algorithmen verwenden, wäre es angebracht, $BQP$ mit $BPP$ zu vergleichen,
-aber dieses wurde bisher nicht. 
+aber bisher wurde noch für kein NP-hartes Problem ein \linebreak effizienter Algorithmus angegeben \cite{Barenco}.
 
 \section{Zusammenfassung und Ausblick}
 
-Wir haben gesehen, dass es möglich ist, bestimmte Probleme über Quantenalgorithmen efficienter zu Lösen.
-
-Die genaue Beziehung zwischen $BQP$ und $P$ bzw. $NP$ ist noch unklar.
+Wir haben gesehen, dass es möglich ist, bestimmte Probleme über Quantenalgorithmen effizienter zu lösen.
 
 Es sind bisher nur wenige Quantenalgorithmen verfügbar und die unintuitive Natur der Quantenmechanik
 erschwert es weitere zu finden. 
 
-Bisher wurden keine Quantencomputer in nutzbarer Größe gebaut. Wenn dies geschieht können Eigenschaften
-mit bestehenden Computern weiter untersucht werden.
+Die genaue Beziehung zwischen BQP und P bzw. NP ist noch unklar. Insbesondere letzteres ist interessant,
+denn sollte $\cNP \subseteq \cBQP$ gelten, dann könnte man für viele relevante Probleme effiziente Lösungen entwickeln,
+unter der Annahme, dass irgendwann nutzbare Quantencomputer existieren werden.
+
+Bisher wurden keine Quantencomputer in nutzbarer Größe gebaut. Allerdings wurden bereits Quantenalgorithmen 
+erfolgreich an kleinen, experimentellen Systemen mit wenigen Qubits getestet.
+
+Sollten allerdings funktionsfähige Systeme entwickelt werden, dann können durch steigendes 
+Interesse und die Verfügbarkeit von Testsystemen möglicherweise noch viele neue Algorithmen entwickelt werden.
 
 \bibliographystyle{abbrv}
 \bibliography{sigproc}
-\nocite{Barenco, Nielsen}
 
 \end{document}

@@ -1,9 +1,9 @@
 \documentclass[xcolor=colortbl
 %,draft
+,ngerman
 ]{beamer}
 \mode<presentation>
 
-\usepackage{tikz}
 \usepackage[ngerman]{babel}
 \usepackage[utf8]{inputenc}
 \usepackage[T1]{fontenc}
@@ -11,55 +11,132 @@
 \usepackage{xcolor}   			%Farbige Schrift ermöglichen
 \usepackage{amsmath}  			%Zusätzliche Mathebefehle
 \usepackage{mathtools} 
+\usepackage{tikz}
 
 \usetikzlibrary{backgrounds,fit,decorations.pathreplacing, positioning, calc}
-%\beamerdefaultoverlayspecification{<+->}
 
 \input{../shared.tex}
 
 % Load Theme
 \usetheme[slogan=false, navigation=false, 
-frametotal=true,    % TODO: nrtiaenrtuvlenr
+frametotal=false,
 myriad=false]{UzL}
 
 \begin{document}
 \maketitle
 
+\iffalse
 \begin{frame}
     \tableofcontents
 \end{frame}
+\fi
 
 \section{Einführung}
 
-\section{Quantenbits}
+
+\begin{frame}{Quantenberechnungen - Einführung}
+    \begin{itemize}
+        \item Grundlagen und mathematisches Modell
+        \item Einschränkungen
+        \item Simulation klassischer Computer
+        \item Deutschs Algorithmus
+        \item Komplexität
+    \end{itemize}
+\end{frame}
+
+\begin{frame}{Quantencomputer}
+    \begin{itemize}
+        \item nutzen quantenmechanische Eigenschaften
+        \item können klassische Rechner effizient simulieren
+        \item für bestimmte Aufgaben effizienter
+        \item Quantensysteme haben unintuitives Verhalten
+        \item bisher nur wenige Algorithmen
+    \end{itemize}
+\end{frame}
+
+\begin{frame}{Quantenalgorithmen}
+    \begin{itemize}
+        \item Simulation von Quantensystemen
+        \item Shors Algorithmus für Primzahlzerlegung in Polynomialzeit
+        \item Grovers Algorithmus für Suche in $\Theta(\sqrt N)$
+        \item Deutschs Algorithmus
+            \begin{itemize}
+                \item einfaches Beispiel
+                \item demonstriert Vorteile von Quantenalgorithmen
+                \item später mehr dazu
+            \end{itemize}
+        \item Simons Problem zeigt Vorteile bei randomisierten Algorithmen
+    \end{itemize}
+\end{frame}
+
 \begin{frame}{Quantenbits (Qubits)}
-    \begin{definition}{Qubits}
+    \begin{itemize}
+        \item Generalisierung von klassischen Bits
+        \item Basiszustände \qreg 0 und \qreg 1
+        \item Superposition: 
+            \begin{itemize}
+                \item Anteile von beiden Zuständen gleichzeitig
+                \item kann nicht genau bestimmt werden
+            \end{itemize}
+    \end{itemize}
+\end{frame}
+
+\subsection{Quantenbits}
+\begin{frame}{Quantenbits (Qubits)}
+    \begin{block}{Notation}{Qubits}
         \begin{align*}
-        &\qreg \psi = a \qreg 0 + b \qreg 1 = \begin{pmatrix} a \\ b \end{pmatrix}  \\
-        &a, b \in \mathbb C \\
-        &|a|^2 + |b|^2 = 1
+        &\qreg \psi = \alpha \qreg 0 + \beta \qreg 1 = \begin{pmatrix} \alpha \\ \beta \end{pmatrix}  \\
+        &\alpha, \beta \in \mathbb C \\
+        &|\alpha|^2 + |\beta|^2 = 1
         \end{align*}
-    \end{definition}
+    \end{block}
+    Für einfache Fälle reicht oft auch $\alpha,\beta \in \mathbb R $.
+\end{frame}
+
+\begin{frame}{Quantenbits (Qubits)}
+    \begin{itemize}
+        \item exakter Zustand nicht ermittelbar
+        \item Messung ergibt \qreg 0 mit Wahrscheinlichkeit $|\alpha|^2$ und \qreg 1 mit $|\beta|^2$
+        \item Messung verändert den Zustand zu \qreg 0 oder \qreg 1
+    \end{itemize}
+\end{frame}
+
+\begin{frame}{Quantenregister}
+    \begin{itemize}
+        \item mehrere Qubits
+        \item stellt Gesamtzustand aller Qubits dar
+        \item Operationen werden auf ganzen Registern statt einzelnen Bits definiert.
+    \end{itemize}
 \end{frame}
 
 \begin{frame}{Quantenregister}
     \begin{example}
     \[
-        \qreg \psi = \qregv a {00} + \qregv a {01} + \qregv a {10} + \qregv a {11} = 
-    \begin{pmatrix}
-        a_{00}  \\
-        a_{01}  \\
-        a_{10}  \\
-        a_{11}  \\
-    \end{pmatrix}
+    \qreg \psi = \qregv \alpha {00} + \qregv \alpha {01} + \qregv \alpha {10} + \qregv \alpha {11} = 
+\begin{pmatrix}
+    \alpha_{00}  \\
+    \alpha_{01}  \\
+    \alpha_{10}  \\
+    \alpha_{11}  \\
+\end{pmatrix}
     \]
+    \uncover<2->{
     \[
-        |a_{00}|^2 + |a_{01}|^2 + |a_{10}|^2 + |a_{11}|^2 = 1
-    \]
+    |\alpha_{00}|^2 + |\alpha_{01}|^2 + |\alpha_{10}|^2 + |\alpha_{11}|^2 = 1
+        \]}
     \end{example}
 \end{frame}
 
-\section{Quantenschaltkreise}
+\subsection{Quantenschaltkreise}
+\begin{frame}{Quantenschaltkreise}
+    \begin{itemize}
+        \item klassische Gatter können als Wahrheitstabellen dargestellt werden
+        \item Quantengatter müssen alle Zustände behandeln
+        \item viele weitere Einschränkungen 
+        \item nur azyklische Schaltkreise betrachtet
+        \item Beispiel: NOT-Gatter
+    \end{itemize}
+\end{frame}
 
 \begin{frame}[t]{NOT-Gatter}
     \begin{itemize}
@@ -70,11 +147,12 @@ myriad=false]{UzL}
 
         \pause
         \item Generalisierung: \(
-            \NOT(a \qreg 0 + b \qreg 1) = b \qreg 0 + a \qreg 1
+            \NOT(\alpha \qreg 0 + \beta \qreg 1) = \beta \qreg 0 + \alpha \qreg 1
         \)
         \pause
+        \item Ausgabe muss wieder Qubit sein
         \item Länge bleibt erhalten: \(
-            |a|^2 + |b|^2 = 1 
+            |\alpha|^2 + |\beta|^2 = 1 
             \)
 
         \pause
@@ -84,66 +162,253 @@ myriad=false]{UzL}
                 1 & 0 \\
             \end{bmatrix} \cdot 
             \begin{pmatrix}
-                a \\ b
+                \alpha \\ \beta
             \end{pmatrix} = 
             \begin{pmatrix}
-                b \\ a
+                \beta \\ \alpha
             \end{pmatrix} 
             \)
     \end{itemize}
 \end{frame}
 
-\begin{frame}
-        \begin{equation*}
-        \begin{bmatrix}
-            0 & 1 \\
-            1 & 0 \\
-        \end{bmatrix} \cdot 
-        \begin{pmatrix}
-            a \\ b
-        \end{pmatrix} = 
-        \begin{pmatrix}
-            b \\ a
-        \end{pmatrix} 
-        \end{equation*}
-\end{frame}
-
-
-\begin{frame}
-    \pictureCNOTb
-\end{frame}
-
-\begin{frame}
-    \pictureHadamard
-\end{frame}
-
-\section{No cloning theorem}
-\begin{frame}
-    \begin{fact}
-        Quanten können im Allgemeinen nicht geklont werden.
-    \end{fact}
+\begin{frame}{Quantenschaltkreise - weitere Eigenschaften}
     \begin{itemize}
-        \item keine Funktion $\qregfun{\varphi,\psi}{\psi,\psi}$
+        \item alle Quantengatter sind als Matrizen darstellbar
+        \item Matrizen sind unitär: $U^\dagger U = U U^\dagger = I$ \\ 
+            ($U^\dagger$ ist konjugiert transponierte Matrix)
+        \begin{itemize}
+            \item Matrizen sind quadratisch: Gatter haben gleiche Eingabe- und Ausgabegrö\ss e
+            \item Alle Berechnungen sind linear
+            \item Alle Schaltkreise sind invertierbar: \\
+                Viele Funktionen (Bits kopieren, AND, OR, XOR) nicht direkt umsetzbar
+        \end{itemize}
+    \end{itemize}
+\end{frame}
+
+\begin{frame}[t]{Beispiel: CNOT} 
+    Umsetzung durch Kontrollbits
+    \begin{example}
+        \begin{itemize}
+            \item CNOT ist verallgemeinertes XOR
+
+            \item \CNOTFormula
+
+            \only<2>{
+                \centerline{ \pictureCNOTa }
+            }
+            \only<3>{
+            \item Als Matrix: 
+                \(
+                \CNOTMatrix
+                \)
+
+            \item CNOT ist unitär, da $\CNOT^\dagger = \CNOT$
+            }
+        \end{itemize}
+    \end{example}
+\end{frame}
+
+\begin{frame}{No cloning theorem}
+    \begin{block}{Axiom}
+        Quantenbits können im Allgemeinen nicht geklont werden.
+    \end{block}
+    \begin{itemize}
+            \pause
+        \item kein Gatter $\qregfun{\psi,\varphi}{\psi,\psi}$
         \item nicht durch unitäre Matrix ausdrückbar
+        \pause
+        \item \alert{scheinbarer Widerspruch:} \\ CNOT mit $\varphi=\qreg 0$ ergibt \qregfun{\psi,0}{\psi, \psi}
 
     \end{itemize}
 \end{frame}
+
+\begin{frame}{No cloning theorem}
+    \newcommand{\psiReg}{\alpha \qreg 0 + \beta \qreg 1}
+    \begin{itemize}
+        \item Sei \( \psi = \alpha \qreg 0 + \beta \qreg 1 \)
+        \item Dann gilt: \( \qreg{\psi,0} = \alpha \qreg{00} + \beta \qreg {01} \)
+        \item \( \CNOT(\qreg{\psi,0}) = \alpha \qreg{00} + \beta \qreg{11}  \)
+
+        \pause
+        \item \alert{Aber:}
+            \[
+                \begin{split}
+                    \qreg{\psi,\psi} &= \left[\psiReg \right]\left[\psiReg \right] \\
+                        &= \alpha^2 \qreg{00} + \alpha\beta\qreg{01} + \alpha\beta\qreg{10} + \beta^2\qreg{11}
+                \end{split}
+            \]
+        \pause
+        \item Gleichheit gilt nur bei $\alpha=0$ oder $\beta=0$
+    \end{itemize}
+\end{frame}
+
 \section{Simulation klassischer Computer}
 
-\begin{frame}
-    \pictureToffoli
+\begin{frame}{Simulation klassischer Computer}
+    \begin{theorem}
+        Jeder klassische Schaltkreis kann auf einem Quantencomputer effizient simuliert werden.
+    \end{theorem}
+
+    Zentrale Rolle dabei spielt das Toffoli-Gatter
 \end{frame}
 
+\begin{frame}[t]{Toffoli-Gatter}
+    \(
+        \qregfun{a, b, c}{a, b, c\oplus (a\wedge b)}
+    \)
+
+    \only<1>{ \pictureToffoli }
+    \only<2-> {
+    \begin{itemize}
+        \item invertierbar: zweimal Anwenden ergibt 
+            \[
+            \qreg{a, b, c\oplus (a\wedge b) \oplus (a\wedge b)} = \qreg{a, b, c}
+            \]
+        \item Kopieren von Bits: \\ Für $a = \qreg 1, c = \qreg 0$: \qregfun{1,b,0}{1,b,b}
+        \item NAND: \\ Für $c = \qreg 1$: \qregfun{a,b,1}{a,b,\neg(a \wedge b)}
+        \item Alle anderen Gatter können über NANDs realisiert werden.
+    \end{itemize}
+    }
+\end{frame}
+
+\begin{frame}{Simulation klassischer Computer}
+    \begin{itemize}
+        \item Mehrere Kabel können an Ausgang angebracht werden
+        \item Über verschaltete NANDs ist jede klassische Schaltung realisierbar
+        \item Simulation ist effizient: Jedes Gatter wird durch konstant viele Toffoli-Gatter ersetzt
+    \end{itemize}
+\end{frame}
+
+\begin{frame}{Deutschs Algorithmus}
+    \begin{itemize}
+        \item einfacher Algorithmus
+        \item zeigt Quantenparallelismus
+        \item Aber: keine reale Anwendung
+    \end{itemize}
+\end{frame}
+
+\begin{frame}{Vorbereitung: Hadamard-Gatter}
+    \[
+        H = \frac{1}{\sqrt 2}
+        \begin{bmatrix}
+            1 & 1 \\
+            1 & -1 \\
+        \end{bmatrix}
+    \]
+
+    \centerline{ \pictureHadamard }
+
+    \[
+    \hadamardPlus
+    \]
+    \[
+    \hadamardMinus
+    \]
+
+\end{frame}
 
 \section{Deutschs Algorithmus}
-\begin{frame}
-    \pictureDeutschAlgo
+\begin{frame}{Deutschs Algorithmus}
+    \begin{itemize}
+        \item gegeben: Funktion $f(x) : \{0,1\} \rightarrow \{0,1\}$
+        \item entscheide, ob $f(0) = f(1)$
+        \item alternativ: Berechne $f(0) \oplus f(1)$
+        \item klassischer Algorithmus: Berechne jeweils $f(0)$ und $f(1)$.
+        \item Deutschs Algorithmus löst das Problem mit einer Auswertung von $f$.
+    \end{itemize}
 \end{frame}
-\section{Deutsch-Jozsa Algorithmus}
+
+
+\begin{frame}{Deutschs Algorithmus}
+    \begin{itemize}
+        \item gegeben: Funktion $f(x) : \{0,1\} \rightarrow \{0,1\}$
+        \item Sei $U_f$ Quantengatter und setze $\qregfun{x,y}{x, y \oplus f(x)}$ um. 
+        \item Für $y = \qreg 0$ kann $f(x)$ berechnet werden.
+        \item Stattdessen: $x = \qreg + = \qregPlus$.
+        \item Dann $U_f$ anwenden: \[
+                \qreg{x,f(x)} = \frac{\qreg{0, f(0)} + \qreg{1, f(1)}}{\sqrt 2}
+                \]
+        \item \alert{Problem:} Es werden zwar $f(0)$ und $f(1)$ berechnet, aber man erhält beim Messen nur jeweils eines.
+    \end{itemize}
+\end{frame}
+
+\begin{frame}{Deutschs Algorithmus: Vorüberlegungen}
+    \begin{itemize}
+        \item Quanteninterferenz
+        \item Sei nun wieder $x$ beliebig. \\[0.2em]
+            Setze $y = \qreg - = \qregMinus$ und wende $U_f$ an.
+        \item 
+        \begin{equation*}
+            U_f \cdot \left( \qreg x \qbitH - \right) = (-1)^{f(x)} \qreg x \qbitH - 
+        \end{equation*}
+    \end{itemize}
+\end{frame}
+
+\begin{frame}[t]{Deutschs Algorithmus}
+    \pictureDeutschAlgo
+
+    \only<1>{
+        \begin{equation*}
+        \qreg {\psi_1} = \qbitH+\qbitH- 
+        \end{equation*}
+    }
+    \only<2>{
+    Anwendung von $U_f$ ergibt 
+        \begin{equation*}
+            \qreg{\psi_2} = \begin{cases}
+                \pm \qbitH+ \qbitH- & \text{für } f(0) = f(1) \\[1.5em]
+                \pm \qbitH- \qbitH- & \text{für } f(0) \neq f(1)
+                \end{cases}
+        \end{equation*}
+    }
+    \only<3>{
+        \begin{equation*}
+            \begin{split}
+                \qreg{\psi_3} &= \left\{\begin{array}{lr}
+                    \pm \qreg 0 \qbitH- & \text{für } f(0) = f(1) \\[1.5em]
+                    \pm \qreg 1 \qbitH- & \text{für } f(0) \neq f(1) 
+                \end{array}\right\} \\[1.2em] &= \pm \qreg{f(0) \oplus f(1)} \qbitH-
+            \end{split}
+        \end{equation*}
+    }
+\end{frame}
+
+\subsection{Deutsch-Jozsa Algorithmus}
+\begin{frame}{Deutsch-Jozsa Algorithmus}
+    \begin{itemize}
+        \item Generalisierung von Deutschs Algorithmus auf $n$ bits.
+        \item gegeben: Funktion $f(x) : \{0,1\}^n \rightarrow \{0,1\}$
+        \item entscheide, ob $f$ konstant oder balanciert (Hälfte 0, Hälfte 1)\\
+            andere Werte treten nicht auf
+        \item auf klassischem Rechner: $\Theta(2^n)$
+        \item auf Quantenrechner in Linearzeit mit $\Theta(n)$ Qubits
+    \end{itemize}
+\end{frame}
 
 \section{Komplexität}
-\begin{frame}
+\begin{frame}{Komplexität}
+    \begin{itemize}
+        \item Simulation von klassischen Schaltkreisen ohne Zeitverlust
+        \item Deutsch-Jozsa-Algorithmus exponentiell schneller
+        \item Polynomialzeit auf Quantenalgorithmen $\cBQP$: \\
+            \emph{bounded error quantum polynomial time}
+        \item $ \cP \subseteq \cBPP \subseteq \cBQP \subseteq \cPSPACE $
+        \item $\cNP~?~\cBQP$
+    \end{itemize}
+\end{frame}
+
+\section{Zusammenfassung}
+\begin{frame}{Zusammenfassung}
+    \begin{itemize}
+        \item Quantenrechner sind (vermutlich) mächtiger als klassische
+        \item Bei Komplexität ist noch vieles unbekannt
+        \item noch keine nutzbaren Quantenrechner
+        \item experimentelle Systeme mit wenigen Qubits konnten Quantenalgorithmen nutzen
+        \item Möglichkeit zur technischen Realisierung
+        \item bisher nur wenige Algorithmen
+    \end{itemize}
 \end{frame}
 
 \end{document}
+
 
